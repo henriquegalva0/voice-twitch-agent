@@ -44,7 +44,8 @@ FAIXA_DE_AUDIO = 44100
 COR_FUNDO = (255, 255, 0)
 
 # llm info
-llm = OllamaLLM(model="llama3.2:1b")
+AUTH_TOKEN = os.getenv('AUTH_TOKEN')
+llm = OllamaLLM(model="llama3.2:1b", base_url=AUTH_TOKEN)
 gatilhos_definidos = ['tufo responda', 'tofu responda', 'tudo responda', 'tu responda']
 nome_streamer = os.getenv('STREAMER_NAME')
 

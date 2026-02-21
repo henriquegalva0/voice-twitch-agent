@@ -47,20 +47,62 @@ Calls the LLM to the streamer message.
 #### chat message
 Calls the LLM to chat's message.
 
-# VISUAL INTERFACE
+## VISUAL INTERFACE
 Pygame controls our whole script adding visual representation while the TTS speaks.
 
 -----
 
 ## Setup
 
-Firstly, create a `.env` file inserting your own info in each variable. You can obtain your twitch app *CLIENT_ID* and *CLIENT_SECRET* by accessing [dev.twitch](https://dev.twitch.tv/console/apps). After that, click on `Register Your Application` and copy the useful info.
+Firstly, access [google collab](https://colab.google/) and paste the following code on one cell:
+
+```
+!sudo apt-get update && sudo apt-get install -y zstd
+!curl -fsSL https://ollama.com/install.sh | sh
+!pip install pyngrok
+
+import os
+import threading
+import time
+
+def run_ollama():
+    os.environ['OLLAMA_HOST'] = '0.0.0.0'
+    os.system("ollama serve")
+
+threading.Thread(target=run_ollama, daemon=True).start()
+time.sleep(10)
+!ollama pull llama3.2:1b
+```
+
+After executing the code above, execute the next script in a new cell:
+
+```
+from pyngrok import ngrok
+import re
+from google.colab import userdata
+
+NGROK_TOKEN = userdata.get('NGROK')
+ngrok.set_auth_token(NGROK_TOKEN)
+
+ngrok.kill()
+
+try:
+    url_publica = ngrok.connect(11434, proto="http")
+    # Limpa a string para garantir que pegamos apenas a URL
+    endpoint = re.sub(r'http://', 'https://', url_publica.public_url)
+    print(f"🔗 Copy the following URL to your base_url:\n{endpoint}")
+except Exception as e:
+    print(f"Error Ngrok: {e}")
+```
+
+With that ready, create a `.env` file inserting your own info in each variable. You can obtain your twitch app *CLIENT_ID* and *CLIENT_SECRET* by accessing [dev.twitch](https://dev.twitch.tv/console/apps). After that, click on `Register Your Application` and copy the useful info.
 
 ```
 CLIENT_ID=your_twitch_app_id
 CLIENT_SECRET=your_twitch_app_secret
 NAME=your_twitch_channel_name
 STREAMER_NAME=your_name
+AUTH_TOKEN=ngrok_redirect_link
 ```
 
 Now, to run the code, start by cloning the github repository.
@@ -78,7 +120,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Run the code:
+Run the code and you're ready!
 
 ```
 python ./agentcode.py
