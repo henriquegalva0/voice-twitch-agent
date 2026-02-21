@@ -1,0 +1,9 @@
+langchain-ollama
+asyncio
+pygame
+SpeechRecognition
+sounddevice
+pyttsx3
+PyAudio
+twitchAPI
+python-dotenv
