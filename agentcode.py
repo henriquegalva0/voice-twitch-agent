@@ -22,6 +22,8 @@ from twitchAPI.chat import Chat, ChatMessage, ChatEvent
 from twitchAPI.oauth import UserAuthenticator
 from twitchAPI.type import AuthScope
 import queue
+# csv
+import csv
 
 # VARIÁVEIS GLOBAIS
 
@@ -135,6 +137,26 @@ async def iniciar_twitch():
     except Exception as e:
         print(f"Erro Twitch: {e}")
 
+# DATASET BUILDING
+
+def salvar_no_dataset(usuario, pergunta, resposta):
+    arquivo_csv = 'dataset_tufo.csv'
+    file_exists = os.path.isfile(arquivo_csv)
+    
+    try:
+        with open(arquivo_csv, mode='a', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=['user', 'question', 'answer'])
+            if not file_exists:
+                writer.writeheader()
+            writer.writerow({
+                'user': usuario,
+                'question': pergunta.strip(),
+                'answer': resposta.strip()
+            })
+
+    except Exception as e:
+        print(f"Erro ao salvar no CSV: {e}")
+
 # LANGCHAIN LOGIC
 
 
@@ -192,6 +214,7 @@ def cerebro_do_tufo():
                             falar(rd.choice(["Vou pensar aqui, chefe!", "To pensando, chefe, calma aí!", "Espera um segundo, chefe!"]))
                             resposta = processar_texto(pergunta_ouvida)
                             falar(resposta)
+                            salvar_no_dataset("Henrique (Voz)", pergunta_ouvida, resposta)
                             break
                         else:
                             falar('Fala logo, chefe.')
@@ -228,6 +251,7 @@ Tufo, responda: {texto}.
                     falar(rd.choice(["Vou pensar aqui!", "To pensando calma aí!", "Espera um segundo!"]))
                 resposta = llm.invoke(prompt)
                 falar(resposta)
+                salvar_no_dataset(usuario, texto, resposta)
             except Exception as e:
                 print(f"Erro LLM: {e}")
             

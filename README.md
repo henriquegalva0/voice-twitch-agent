@@ -36,6 +36,9 @@ Filter chat only selecting messages that has not only _"Tufo"_ but also _"?"_.
 ### auth twitch
 Authenticate on the Twitch channel.
 
+## DATASET BUILDING
+Use the data to build a simple dataset to train future models.
+
 ## LANGCHAIN LOGIC
 The core of our script.
 ### llm invoke
