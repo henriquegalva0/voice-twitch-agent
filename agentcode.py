@@ -47,7 +47,11 @@ COR_FUNDO = (255, 255, 0)
 
 # llm info
 AUTH_TOKEN = os.getenv('AUTH_TOKEN')
-llm = OllamaLLM(model="llama3.2:1b", base_url=AUTH_TOKEN)
+llm = OllamaLLM(
+    model="llama3.2:1b", 
+    base_url=AUTH_TOKEN,
+    temperature=0.8
+)
 gatilhos_definidos = ['tufo responda', 'tofu responda', 'tudo responda', 'tu responda']
 nome_streamer = os.getenv('STREAMER_NAME')
 
@@ -115,10 +119,12 @@ def dispositivo_de_ouvir(segundos=3):
 
 # filtrar mensagens
 async def on_message(msg: ChatMessage):
-    if '?' in msg.text and any(nome in msg.text for nome in ['tufo', 'tufinho', 'tufão', 'tufao', 'papagaio']):
+    texto = msg.text.lower()
+    gatilhos = ['tufo', 'tufinho', 'tufão', 'tufao', 'papagaio']
+
+    if any(nome in texto for nome in gatilhos) and '?' in texto and '<|' not in texto and '|>' not in texto and '|' not in texto and len(texto)<200:
         dados = {"origem": "chat", "usuario": msg.user.name, "mensagem": msg.text}
         fila_mensagens.put(dados)
-        print(f"📥 Chat de {msg.user.name} na fila.")
 
 # auth twitch
 async def iniciar_twitch():
@@ -164,7 +170,7 @@ def salvar_no_dataset(usuario, pergunta, resposta):
 def processar_texto(comando_usuario):
     comando_inicial = f"""
 <|begin_of_text|><|start_header_id|>system<|end_header_id|>
-Você é um papagaio brasileiro chamado Tufo que é sarcástico e muito engraçado.
+Você é um papagaio brasileiro chamado Tufo que é sarcástico, ranzinza e muito engraçado.
 Seu dono se chama {nome_streamer} e ele é um streamer.
 Responda SEMPRE em Português do Brasil.
 Seja EXTREMAMENTE breve e curto em suas respostas, mas muito criativo.
@@ -238,7 +244,7 @@ def cerebro_do_tufo():
 <|begin_of_text|><|start_header_id|>system<|end_header_id|>
 Você é um papagaio brasileiro chamado Tufo que é sarcástico e muito engraçado.
 Seu dono se chama {nome_streamer} e ele é um streamer.
-Você está interagindo com o usuário "{usuario}" da stream de {nome_streamer}.
+Você está interagindo com o usuário "{usuario}".
 Responda SEMPRE em Português do Brasil.
 Seja EXTREMAMENTE breve e curto em suas respostas, mas muito criativo.
 Responda no MÁXIMO com 15 palavras.
