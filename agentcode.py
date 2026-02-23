@@ -120,10 +120,9 @@ def dispositivo_de_ouvir(segundos=3):
 # filtrar mensagens
 async def on_message(msg: ChatMessage):
     texto = msg.text.lower()
-    gatilhos = ['tufo', 'tufinho', 'tufão', 'tufao', 'papagaio']
 
-    if any(nome in texto for nome in gatilhos) and '?' in texto and '<|' not in texto and '|>' not in texto and '|' not in texto and len(texto)<200:
-        dados = {"origem": "chat", "usuario": msg.user.name, "mensagem": msg.text}
+    if "!tufo" in texto and '<|' not in texto and '|>' not in texto and '|' not in texto and len(texto)<200:
+        dados = {"origem": "chat", "usuario": msg.user.name, "mensagem": msg.text.split('!tufo')[1]}
         fila_mensagens.put(dados)
 
 # auth twitch

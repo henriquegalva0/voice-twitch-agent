@@ -128,3 +128,17 @@ Run the code and you're ready!
 ```
 python ./agentcode.py
 ```
+
+Trigger to interact in twitch chat:
+
+```
+!tufo <msg>
+```
+
+Trigger to interact by voice recognition:
+
+```
+Speaker: "tufo responda"
+wait for its reponse
+Speaker: <question>
+```
